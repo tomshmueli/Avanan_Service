@@ -12,7 +12,7 @@ event_service = EventService()
 stats_service = StatsService(event_service)
 
 @app.on_event("startup")
-async def startup_event():
+def startup_event():
     # Pass the initialized services to the routers
     events.set_event_service(event_service)
     stats.set_stats_service(stats_service)

@@ -3,7 +3,8 @@ from app.models.event import Event
 from app.models.event_service import EventService
 
 router = APIRouter()
-event_service: EventService = None
+
+event_service: EventService = None  # Will be set in main.py by dependency injection
 
 
 def set_event_service(service: EventService):

@@ -19,7 +19,7 @@ def get_stats_service() -> StatsService:
 async def get_stats(
         start: Optional[int] = Query(None),
         end: Optional[int] = Query(None),
-        stats_service: StatsService = Depends(get_stats_service)
+        stats_service: StatsService = Depends(get_stats_service)  # Dependency Injection
 ) -> Dict[str, int]:
     try:
         return stats_service.get_stats(start, end)
