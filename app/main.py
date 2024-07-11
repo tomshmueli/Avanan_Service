@@ -3,6 +3,7 @@ from app.api import events, stats
 from app.models.event_service import EventService
 from app.models.stats_service import StatsService
 import uvicorn
+import time
 
 app = FastAPI()
 
@@ -18,7 +19,14 @@ async def startup_event():
 
 @app.get("/")
 async def read_root():
-    return {"message": "Welcome to the event service!"}
+    elapsed_time = int(time.time() - event_service.start_time)
+    current_counts = event_service.get_keyword_counts()
+    return {
+        "message": "Welcome to the event service! Here in root directory, you can see the current keyword counts and "
+                   "TIME since the service started.",
+        "elapsed_time": elapsed_time,
+        "keyword_counts": current_counts
+    }
 
 app.include_router(events.router, prefix="/api/v1")
 app.include_router(stats.router, prefix="/api/v1")
