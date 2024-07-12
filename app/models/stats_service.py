@@ -24,6 +24,21 @@ class StatsService:
             raise ValueError("Invalid interval: start time must be before end time.")
 
         stats_time = self.event_service.get_stats_time()
-        end_index = bisect.bisect_right(stats_time, (end, {}))
+
+        # Custom binary search logic to only consider the first element (timestamp)
+        # by that we assure that the search is done only on the timestamps
+        # Binary search saves us iterating over the whole list of timestamps
+        low, high = 0, len(stats_time)
+        while low < high:
+            mid = (low + high) // 2
+            if stats_time[mid][0] > end:
+                high = mid
+            else:
+                low = mid + 1
+
+        end_index = low
+
+        if end_index == 0:
+            return {keyword: 0 for keyword in KEYWORDS}
 
         return stats_time[end_index - 1][1]

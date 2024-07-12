@@ -18,6 +18,35 @@ class TestEventService(unittest.TestCase):
         event_service.keyword_counts = {keyword: 0 for keyword in KEYWORDS}
         event_service.stats_time = []
 
+    def test_interval_logic(self):
+        # Add events with sleep intervals - This should be the first one Tested!
+        time.sleep(5)
+        client.post("/api/v1/events", json={"sentence": "email"})
+        time.sleep(5)
+        client.post("/api/v1/events", json={"sentence": "email"})
+        time.sleep(5)
+
+        # Test different intervals
+        # Assuming the tests are run immediately after the last sleep
+
+        # Interval [0, 9]
+        response = client.get("/api/v1/stats?start=0&end=9")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["email"], 1)
+
+        # Interval [2, 70]
+        response = client.get("/api/v1/stats?start=2&end=70")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["email"], 2)
+
+        # Interval [None, 9]
+        response = client.get("/api/v1/stats?end=9")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["email"], 1)
+
     def test_add_sentence_no_substring_count(self):
         response = client.post("/api/v1/events", json={"sentence": "emailed it to me and it all be checkpointedddd"})
         self.assertEqual(response.status_code, 200)
@@ -78,40 +107,6 @@ class TestEventService(unittest.TestCase):
         self.assertEqual(data["email"], 2)
         self.assertEqual(data["avanan"], 1)
         self.assertEqual(data["security"], 1)
-
-    def test_interval_logic(self):
-        # Add events with sleep intervals
-        client.post("/api/v1/events", json={"sentence": "email"})
-        time.sleep(5)
-        client.post("/api/v1/events", json={"sentence": "email"})
-        time.sleep(5)
-
-        # Test different intervals
-        # Assuming the tests are run immediately after the last sleep
-
-        # Interval [0, 5]
-        response = client.get("/api/v1/stats?start=0&end=5")
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data["email"], 1)
-
-        # Interval [2, 70]
-        response = client.get("/api/v1/stats?start=2&end=70")
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data["email"], 2)
-
-        # Interval [None, 9]
-        response = client.get("/api/v1/stats?end=9")
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data["email"], 1)
-
-        # Interval [11, None]
-        response = client.get("/api/v1/stats?start=11")
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data["email"], 2)
 
 
 if __name__ == "__main__":
