@@ -46,7 +46,7 @@ This project implements a simple Python service that receives ongoing events of 
    python -m unittest discover -s tests
 
 ## Project Structure:
-- **app/main.py:** Entry point for the FastAPI application. Initializes and configures the services.
+- **app/main.py:** Entry point for the FastAPI application. Initializes and configures the services also included Root dir to show current count status
 - **app/api/events.py:** Defines the /events endpoint for receiving and processing sentences.
 - **app/api/stats.py:** Defines the /stats endpoint for retrieving keyword counts within a specified time interval.
 - **app/models/event.py:** Contains the Event model with the sentence and the global KEYWORDS.
